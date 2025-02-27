@@ -21,23 +21,28 @@ class QueryService {
     accessionNumber?: string,
     startDate?: string,
     endDate?: string
-  ): Promise<void> {
+  ): Promise<{ affectedRows: number }> {
+    let updateResult;
+  
     if (accessionNumber) {
-      const resetExamRecordQuery = `
-      UPDATE dicomstudies
-      SET nu_numrecordplaines = 0, nu_numrecords = 0
-      WHERE accessionn = '${accessionNumber}';
-    `;
-      await AppDataSource.query(resetExamRecordQuery);
+      updateResult = await AppDataSource.createQueryBuilder()
+        .update("dicomstudies")
+        .set({ nu_numrecordplaines: 0, nu_numrecords: 0 })
+        .where("accessionn = :accessionNumber", { accessionNumber })
+        .execute();
     } else if (startDate && endDate) {
-      const resetExamRecordQuery = `
-      UPDATE dicomstudies
-      SET nu_numrecordplaines = 0, nu_numrecords = 0
-      WHERE studydate BETWEEN '${startDate}' AND '${endDate}';
-    `;
-      await AppDataSource.query(resetExamRecordQuery);
+      updateResult = await AppDataSource.createQueryBuilder()
+        .update("dicomstudies")
+        .set({ nu_numrecordplaines: 0, nu_numrecords: 0 })
+        .where("studydate BETWEEN :startDate AND :endDate", { startDate, endDate })
+        .execute();
+    } else {
+      throw new Error("Parâmetros inválidos para resetar registros");
     }
+  
+    return { affectedRows: updateResult.affected ?? 0 };
   }
+  
 }
 
 export default new QueryService();

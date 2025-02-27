@@ -5,35 +5,47 @@ class QueryController {
   async getVolumetricReport(req: Request, res: Response): Promise<void> {
     try {
       const { startDate, endDate } = req.body;
-      console.log(startDate, endDate);
+      console.log('Start Date:', startDate, 'End Date:', endDate);
+
       const data = await QueryService.getVolumetricReport(startDate, endDate);
       res.status(200).json(data);
     } catch (error: any) {
-      res
-        .status(500)
-        .json({ message: 'Erro ao buscar dados', error: error.message });
+      console.error('Erro ao buscar dados:', error);
+      res.status(500).json({
+        message: 'Erro ao buscar dados',
+        error: error.message,
+      });
     }
   }
 
   async resetExamRecord(req: Request, res: Response): Promise<void> {
     try {
       const { accessionNumber, startDate, endDate } = req.body;
-      console.log(accessionNumber + ' aqui');
-      console.log(startDate + ' aqui');
-      console.log(endDate + ' aqui');
+      
+      let result;
       if (accessionNumber) {
-        await QueryService.resetExamRecord(accessionNumber);
+        result = await QueryService.resetExamRecord(accessionNumber);
       } else if (startDate && endDate) {
-        await QueryService.resetExamRecord(undefined, startDate, endDate);
+        result = await QueryService.resetExamRecord(
+          undefined,
+          startDate,
+          endDate
+        );
       } else {
         res.status(400).json({ message: 'Parâmetros inválidos' });
         return;
       }
-      res.status(200).json({ message: 'Registros resetados com sucesso' });
+
+      res.status(200).json({
+        message: 'Registros resetados com sucesso',
+        affectedRows: result.affectedRows,
+      });
     } catch (error: any) {
-      res
-        .status(500)
-        .json({ message: 'Erro ao resetar registro', error: error.message });
+      console.error('Erro ao resetar registro:', error);
+      res.status(500).json({
+        message: 'Erro ao resetar registro',
+        error: error.message,
+      });
     }
   }
 }
