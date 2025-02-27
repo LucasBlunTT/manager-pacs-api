@@ -16,6 +16,16 @@ class QueryService {
     const result = await AppDataSource.query(volumetricReportQuery);
     return result;
   }
+  
+  async resetExamRecord(accessionNumber: string): Promise<void> {
+    const resetExamRecordCountsQuery = `
+      UPDATE dicomstudies
+      SET nu_numrecordplaines = 0, nu_numrecords = 0
+      WHERE accessionn = '${accessionNumber}';
+    `;
+
+    await AppDataSource.query(resetExamRecordCountsQuery);
+  }
 }
 
 export default new QueryService();
