@@ -29,7 +29,7 @@ class QueryService {
       WHERE accessionn = '${accessionNumber}';
     `;
       await AppDataSource.query(resetExamRecordQuery);
-    } else {
+    } else if (startDate && endDate) {
       const resetExamRecordQuery = `
       UPDATE dicomstudies
       SET nu_numrecordplaines = 0, nu_numrecords = 0

@@ -18,15 +18,18 @@ class QueryController {
   async resetExamRecord(req: Request, res: Response): Promise<void> {
     try {
       const { accessionNumber, startDate, endDate } = req.body;
+      console.log(accessionNumber + ' aqui');
+      console.log(startDate + ' aqui');
+      console.log(endDate + ' aqui');
       if (accessionNumber) {
         await QueryService.resetExamRecord(accessionNumber);
-        res.status(200).json({ message: 'Registro resetado com sucesso' });
+      } else if (startDate && endDate) {
+        await QueryService.resetExamRecord(undefined, startDate, endDate);
+      } else {
+        res.status(400).json({ message: 'Parâmetros inválidos' });
+        return;
       }
-
-      if (startDate && endDate) {
-        await QueryService.resetExamRecord(startDate, endDate);
-        res.status(200).json({ message: 'Registros resetados com sucesso' });
-      }
+      res.status(200).json({ message: 'Registros resetados com sucesso' });
     } catch (error: any) {
       res
         .status(500)
