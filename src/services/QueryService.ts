@@ -16,15 +16,27 @@ class QueryService {
     const result = await AppDataSource.query(volumetricReportQuery);
     return result;
   }
-  
-  async resetExamRecord(accessionNumber: string): Promise<void> {
-    const resetExamRecordCountsQuery = `
+
+  async resetExamRecord(
+    accessionNumber?: string,
+    startDate?: string,
+    endDate?: string
+  ): Promise<void> {
+    if (accessionNumber) {
+      const resetExamRecordQuery = `
       UPDATE dicomstudies
       SET nu_numrecordplaines = 0, nu_numrecords = 0
       WHERE accessionn = '${accessionNumber}';
     `;
-
-    await AppDataSource.query(resetExamRecordCountsQuery);
+      await AppDataSource.query(resetExamRecordQuery);
+    } else {
+      const resetExamRecordQuery = `
+      UPDATE dicomstudies
+      SET nu_numrecordplaines = 0, nu_numrecords = 0
+      WHERE studydate BETWEEN '${startDate}' AND '${endDate}';
+    `;
+      await AppDataSource.query(resetExamRecordQuery);
+    }
   }
 }
 
