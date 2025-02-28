@@ -3,8 +3,8 @@ import 'reflect-metadata';
 import express from 'express';
 import cors from 'cors';
 import { AppDataSource } from './database/data-source';
-import queryRoutes from './routes/query.routes';
 import logger from './config/winston';
+import queryRoutes from './routes/query.routes';
 
 const app = express();
 
