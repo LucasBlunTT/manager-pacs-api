@@ -41,8 +41,7 @@ class QueryService {
     }
   
     return { affectedRows: updateResult.affected ?? 0 };
-  }
-  
+  }  
 }
 
 export default new QueryService();
