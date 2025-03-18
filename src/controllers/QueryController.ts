@@ -2,12 +2,30 @@ import { Request, Response } from 'express';
 import QueryService from '../services/QueryService';
 
 class QueryController {
-  async getVolumetricReport(req: Request, res: Response): Promise<void> {
+
+  async getVolumetricReportByDate(req: Request, res: Response): Promise<void> {
     try {
       const { startDate, endDate } = req.body;
       console.log('Start Date:', startDate, 'End Date:', endDate);
 
-      const data = await QueryService.getVolumetricReport(startDate, endDate);
+      const data = await QueryService.getVolumetricReportByDate(startDate, endDate);
+      res.status(200).json(data);
+    } catch (error: any) {
+      console.error('Erro ao buscar dados:', error);
+      res.status(500).json({
+        message: 'Erro ao buscar dados',
+        error: error.message,
+      });
+    }
+  }
+
+  async getVolumetricReport(req: Request, res: Response): Promise<void> {
+    try {
+      const { startDate, endDate } = req.body;
+      const formattedStartDate = startDate.replace(/-/g, '');
+      const formattedEndDate = endDate.replace(/-/g, '');
+
+      const data = await QueryService.getVolumetricReport(formattedStartDate, formattedEndDate);
       res.status(200).json(data);
     } catch (error: any) {
       console.error('Erro ao buscar dados:', error);

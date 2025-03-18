@@ -17,6 +17,24 @@ class QueryService {
     return result;
   }
 
+  async getVolumetricReportByDate(startDate: string, endDate: string): Promise<any> {
+    const volumetricReportQuery = `
+      SELECT TO_CHAR(CAST(dicomstudies.studydate AS DATE), 'YYYY-MM') AS "Mês",
+       dicomstudies.studymodal AS "Modalidade",
+       COUNT(DISTINCT dicomstudies.studyinsta) AS "Estudos",
+       ROUND(SUM(dicomimages.nu_filesize)/1024/1024/1024, 1) AS "Tamanho (GB)"
+      FROM dicomstudies
+      INNER JOIN dicomseries ON dicomstudies.studyinsta = dicomseries.studyinsta
+      INNER JOIN dicomimages ON dicomseries.seriesinst = dicomimages.seriesinst
+      WHERE CAST(dicomstudies.studydate AS DATE) BETWEEN '${startDate}' AND '${endDate}'
+      GROUP BY TO_CHAR(CAST(dicomstudies.studydate AS DATE), 'YYYY-MM'), dicomstudies.studymodal
+      ORDER BY "Mês" ASC, "Tamanho (GB)" DESC;
+    `;
+
+    const result = await AppDataSource.query(volumetricReportQuery);
+    return result;
+  }
+
   async resetExamRecord(
     accessionNumber?: string,
     startDate?: string,
