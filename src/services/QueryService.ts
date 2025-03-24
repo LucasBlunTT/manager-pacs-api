@@ -61,6 +61,19 @@ class QueryService {
   
     return { affectedRows: updateResult.affected ?? 0 };
   }  
+
+  async getDisckActive(): Promise<string[]> {
+    const query = `
+      SELECT no_localstore 
+      FROM devicestore 
+      WHERE in_current = 'true';
+    `;
+  
+    const result: { no_localstore: string }[] = await AppDataSource.query(query);
+  
+    return result.map(({ no_localstore }) => no_localstore.match(/^[A-Z]:\//)?.[0] || '');
+  }
+  
 }
 
 export default new QueryService();

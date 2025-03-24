@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import QueryService from '../services/QueryService';
+import { verifyStorageSpace } from '../util/verifyStorageSpace';
 
 class QueryController {
 
@@ -67,6 +68,28 @@ class QueryController {
       });
     }
   }
+
+  async getDisckActive(req: Request, res: Response): Promise<void> {
+    try {    
+      const diskActive = await QueryService.getDisckActive();
+
+      const space = await verifyStorageSpace(diskActive[0]);
+
+      if (!space) {
+        res.status(500).json({ message: 'Erro ao verificar espaço em disco' });
+        return;
+      }
+      const { total, free } = space;
+      res.status(200).json({ total, free });  
+    } catch (error: any) {
+      console.error('Erro ao verificar espaço em disco:', error);
+      res.status(500).json({
+        message: 'Erro ao verificar espaço em disco',
+        error: error.message,
+      });
+    }
+  }
+
 }
 
 export default QueryController;

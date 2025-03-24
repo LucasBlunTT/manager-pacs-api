@@ -5,6 +5,7 @@ import cors from 'cors';
 import { AppDataSource } from './database/data-source';
 import logger from './config/winston';
 import queryRoutes from './routes/query.routes';
+import { verifyStorageSpace } from './util/verifyStorageSpace';
 
 const app = express();
 
