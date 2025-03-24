@@ -32,6 +32,7 @@ class QueryService {
     `;
 
     const result = await AppDataSource.query(volumetricReportQuery);
+    console.log(result);
     return result;
   }
 

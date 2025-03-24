@@ -9,6 +9,7 @@ class QueryController {
       console.log('Start Date:', startDate, 'End Date:', endDate);
 
       const data = await QueryService.getVolumetricReportByDate(startDate, endDate);
+
       res.status(200).json(data);
     } catch (error: any) {
       console.error('Erro ao buscar dados:', error);
