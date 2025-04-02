@@ -1,4 +1,5 @@
 import { AppDataSource } from '../database/data-source';
+import { verifyStorageSpace } from '../util/verifyStorageSpace';
 class QueryService {
   async getVolumetricReport(startDate: string, endDate: string): Promise<any> {
     const volumetricReportQuery = `
@@ -62,7 +63,7 @@ class QueryService {
     return { affectedRows: updateResult.affected ?? 0 };
   }  
 
-  async getDisckActive(): Promise<string[]> {
+  async getDisckActive(): Promise<{ drives: string[], rawResult: { no_localstore: string }[], space: { total: number; free: number } | null }> {
     const query = `
       SELECT no_localstore 
       FROM devicestore 
@@ -70,10 +71,11 @@ class QueryService {
     `;
   
     const result: { no_localstore: string }[] = await AppDataSource.query(query);
-  
-    return result.map(({ no_localstore }) => no_localstore.match(/^[A-Z]:\//)?.[0] || '');
+    const drives = result.map(({ no_localstore }) => no_localstore.match(/^[A-Z]:\//)?.[0] || '');
+    const space = await verifyStorageSpace(drives[0]);
+    
+    return { drives, rawResult: result, space };
+  }
   }
   
-}
-
 export default new QueryService();
