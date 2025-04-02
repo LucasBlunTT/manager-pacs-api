@@ -1,5 +1,6 @@
 import { AppDataSource } from '../database/data-source';
 import { verifyStorageSpace } from '../util/verifyStorageSpace';
+
 class QueryService {
   async getVolumetricReport(startDate: string, endDate: string): Promise<any> {
     const volumetricReportQuery = `
@@ -9,31 +10,29 @@ class QueryService {
       FROM dicomstudies
       INNER JOIN dicomseries ON dicomstudies.studyinsta = dicomseries.studyinsta
       INNER JOIN dicomimages ON dicomseries.seriesinst = dicomimages.seriesinst
-      WHERE dicomstudies.studydate BETWEEN '${startDate}' AND '${endDate}'
+      WHERE dicomstudies.studydate BETWEEN $1 AND $2
       GROUP BY dicomstudies.studymodal
       ORDER BY 3 DESC;
     `;
 
-    const result = await AppDataSource.query(volumetricReportQuery);
+    const result = await AppDataSource.query(volumetricReportQuery, [startDate, endDate]);
     return result;
   }
 
   async getVolumetricReportByDate(startDate: string, endDate: string): Promise<any> {
     const volumetricReportQuery = `
-      SELECT TO_CHAR(CAST(dicomstudies.studydate AS DATE), 'YYYY-MM') AS "Mês",
-       dicomstudies.studymodal AS "Modalidade",
-       COUNT(DISTINCT dicomstudies.studyinsta) AS "Estudos",
-       ROUND(SUM(dicomimages.nu_filesize)/1024/1024/1024, 1) AS "Tamanho (GB)"
+      SELECT DISTINCT(dicomstudies.studymodal) AS "Modalidade",
+             COUNT(DISTINCT(dicomstudies.studyinsta)) AS "Estudos",
+             ROUND(SUM(dicomimages.nu_filesize)/1024/1024/1024,1) AS "Tamanho (GB)"
       FROM dicomstudies
       INNER JOIN dicomseries ON dicomstudies.studyinsta = dicomseries.studyinsta
       INNER JOIN dicomimages ON dicomseries.seriesinst = dicomimages.seriesinst
-      WHERE CAST(dicomstudies.studydate AS DATE) BETWEEN '${startDate}' AND '${endDate}'
-      GROUP BY TO_CHAR(CAST(dicomstudies.studydate AS DATE), 'YYYY-MM'), dicomstudies.studymodal
-      ORDER BY "Mês" ASC, "Tamanho (GB)" DESC;
+      WHERE dicomstudies.studydate BETWEEN $1 AND $2
+      GROUP BY dicomstudies.studymodal
+      ORDER BY 3 DESC;
     `;
 
-    const result = await AppDataSource.query(volumetricReportQuery);
-    console.log(result);
+    const result = await AppDataSource.query(volumetricReportQuery, [startDate, endDate]);
     return result;
   }
 
@@ -43,26 +42,27 @@ class QueryService {
     endDate?: string
   ): Promise<{ affectedRows: number }> {
     let updateResult;
-  
+
     if (accessionNumber) {
       updateResult = await AppDataSource.createQueryBuilder()
-        .update("dicomstudies")
+        .update('dicomstudies')
         .set({ nu_numrecordplaines: 0, nu_numrecords: 0 })
-        .where("accessionn = :accessionNumber", { accessionNumber })
+        .where('accessionn = :accessionNumber', { accessionNumber })
         .execute();
     } else if (startDate && endDate) {
       updateResult = await AppDataSource.createQueryBuilder()
-        .update("dicomstudies")
+        .update('dicomstudies')
         .set({ nu_numrecordplaines: 0, nu_numrecords: 0 })
-        .where("studydate BETWEEN :startDate AND :endDate", { startDate, endDate })
+        .where('studydate BETWEEN :startDate AND :endDate', { startDate, endDate })
         .execute();
     } else {
-      throw new Error("Parâmetros inválidos para resetar registros");
+      throw new Error('Parâmetros inválidos para resetar registros');
     }
-  
-    return { affectedRows: updateResult.affected ?? 0 };
-  }  
 
+    return { affectedRows: updateResult.affected ?? 0 };
+  }
+
+ 
   async getDisckActive(): Promise<{ drives: string[], rawResult: { no_localstore: string }[], space: { total: number; free: number } | null }> {
     const query = `
       SELECT no_localstore 
@@ -76,6 +76,6 @@ class QueryService {
     
     return { drives, rawResult: result, space };
   }
-  }
-  
+}
+
 export default new QueryService();
