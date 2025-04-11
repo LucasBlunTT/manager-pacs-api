@@ -30,6 +30,7 @@ Este projeto é uma API desenvolvida para gerenciar e consultar informações re
 ---
 
 ## 📂 Estrutura de Pastas
+```
 /project
 │   README.md    # Documentação do projeto
 │   package.json # Dependências do projeto
@@ -76,7 +77,7 @@ Este projeto é uma API desenvolvida para gerenciar e consultar informações re
 │   │   ├── SendEmail.ts
 │   ├── express.d.ts
 │   ├── index.ts
-
+```
 
 ---
 
@@ -84,11 +85,33 @@ Este projeto é uma API desenvolvida para gerenciar e consultar informações re
 
 ### 🔹 1. Clone o repositório
 ```sh
-https://github.com/LucasBlunTT/manager-pacs-api.git
+git clone  https://github.com/LucasBlunTT/manager-pacs-api.git
 cd manager-pacs-api
-npm run dev
-O servidor estará rodando em http://localhost:3333 🚀
 ```
+
+### 🔹 2. Instale as dependências
+```sh
+npm install
+```
+### 🔹 3. Configure o Banco de Dados PostgreSQL
+Criei um banco de dados PostgreSQL e defini as variáveis no arquivo **.env**:
+```
+DB_HOST=localhost
+DB_PORT=5432
+DB_USER=meu_usuario
+DB_PASSWORD=minha_senha
+DB_NAME=nome_do_banco
+JWT_SECRET=minha_chave_secreta
+```
+
+### 🔹 4. Inicie o Servidor
+```sh
+npm run dev
+```
+O servidor estará rodando em **http://localhost:3333** 🚀
+
+---
+
 🔹 Uso das Rotas
 📌 Relatórios
 POST /api/volumetric-report - Gera um relatório volumétrico com base em intervalo de datas.
