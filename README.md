@@ -86,3 +86,21 @@ Este projeto é uma API desenvolvida para gerenciar e consultar informações re
 ```sh
 https://github.com/LucasBlunTT/manager-pacs-api.git
 cd manager-pacs-api
+npm run dev
+O servidor estará rodando em http://localhost:3333 🚀
+```
+🔹 Uso das Rotas
+📌 Relatórios
+POST /api/volumetric-report - Gera um relatório volumétrico com base em intervalo de datas.
+POST /api/volumetric-report-by-date - Gera um relatório detalhado por data.
+📌 Gerenciamento de Registros
+POST /api/reset-exam-record - Reseta registros de exames com base em número de acesso ou intervalo de datas.
+📌 Monitoramento de Disco
+GET /api/disco-ativo - Retorna informações sobre o disco ativo e espaço disponível.
+🚀 Melhorias Futuras
+Implementar testes automatizados com Jest.
+Adicionar suporte a múltiplos discos no monitoramento de espaço.
+Melhorar a segurança com autenticação e autorização robustas.
+Criar documentação detalhada com Swagger.
+
+Projeto desenvolvido por Lucas Silva. 🎯
