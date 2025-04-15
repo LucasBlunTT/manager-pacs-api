@@ -62,7 +62,6 @@ class QueryService {
     return { affectedRows: updateResult.affected ?? 0 };
   }
 
- 
   async getDisckActive(): Promise<{ drives: string[], rawResult: { no_localstore: string }[], space: { total: number; free: number } | null }> {
     const query = `
       SELECT no_localstore 
@@ -73,9 +72,29 @@ class QueryService {
     const result: { no_localstore: string }[] = await AppDataSource.query(query);
     const drives = result.map(({ no_localstore }) => no_localstore.match(/^[A-Z]:\//)?.[0] || '');
     const space = await verifyStorageSpace(drives[0]);
+
+    console.log('Discos:', space);
     
     return { drives, rawResult: result, space };
   }
-}
+
+  async getStationsNames(): Promise<string[]> {
+    const stationsQuery = `
+      SELECT DISTINCT(stationnam)
+      FROM dicomstudies
+      ORDER BY stationnam;
+    `;
+  
+    const result = await AppDataSource.query(stationsQuery);
+  
+    // Mapeia os nomes das estações
+    const stationNames = result.map((station: { stationnam: string }) => station.stationnam);
+  
+    // Loga o array final de nomes das estações
+    console.log('Nomes das estações:', stationNames);
+  
+    return stationNames;
+  }
+  }
 
 export default new QueryService();
