@@ -21,6 +21,6 @@ AppDataSource.initialize()
   })
   .catch(() => logger.error('Erro ao conectar ao banco de dados'));
 
-app.listen(3333, () => {
+app.listen(3333, '0.0.0.0', () => {
   logger.info('Servidor rodando na porta 3333');
 });

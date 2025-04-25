@@ -3,7 +3,7 @@ import { DataSource } from 'typeorm';
 import path from 'path';
 import { readDataSourceConfig } from '../util/readXML';
 
-const dataSourceConfig = readDataSourceConfig('C:/pixeon/PACS/current/aurora/server/local/deploy/otodata-ds.xml');
+const dataSourceConfig = readDataSourceConfig(path.join(__dirname, '../config/otodata-ds.xml'));
 
 if (!dataSourceConfig) {
   throw new Error('Não foi possível carregar a configuração do datasource');

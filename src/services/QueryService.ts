@@ -87,11 +87,7 @@ class QueryService {
   
     const result = await AppDataSource.query(stationsQuery);
   
-    // Mapeia os nomes das estações
     const stationNames = result.map((station: { stationnam: string }) => station.stationnam);
-  
-    // Loga o array final de nomes das estações
-    console.log('Nomes das estações:', stationNames);
   
     return stationNames;
   }

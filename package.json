@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "description": "Awesome project developed with TypeORM.",
   "type": "commonjs",
+  "license": "MIT",
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",
     "@types/cors": "^2.8.13",
@@ -32,10 +33,10 @@
   },
   "scripts": {
     "start": "node build/index.js",
-    "postinstall": "tsc",
     "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
     "createMigration": "yarn run typeorm migration:create ./src/database/migrations/CreateTableUser",
-    "migration:run": "typeorm-ts-node-commonjs -d ./src/database/data-source.ts migration:run"
+    "migration:run": "typeorm-ts-node-commonjs -d ./src/database/data-source.ts migration:run",
+    "build": "tsc"
   },
   "engines": {
     "node": "20.x"
