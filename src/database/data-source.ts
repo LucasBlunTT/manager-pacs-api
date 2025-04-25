@@ -5,12 +5,16 @@ import { readDataSourceConfig } from '../util/readXML';
 
 const dataSourceConfig = readDataSourceConfig(path.join(__dirname, '../config/otodata-ds.xml'));
 
+const driver = dataSourceConfig?.driverClass?.split('.')
+
+const typeDbc = driver?.includes('postgresql')? 'postgres' : driver?.includes('oracle')? 'oracle' : 'mssql'
+
 if (!dataSourceConfig) {
   throw new Error('Não foi possível carregar a configuração do datasource');
 }
 
 export const AppDataSource = new DataSource({
-  type: 'postgres',
+  type: typeDbc,
   host: dataSourceConfig.connectionUrl.split('/')[2].split(':')[0],
   port: parseInt(dataSourceConfig.connectionUrl.split(':')[3].split('/')[0], 10),
   username: dataSourceConfig.userName,
