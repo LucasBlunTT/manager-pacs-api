@@ -28,6 +28,7 @@
     "nodemailer": "^6.10.0",
     "pg": "^8.13.1",
     "reflect-metadata": "^0.1.13",
+    "sqlite3": "^5.1.7",
     "typeorm": "0.3.11",
     "winston": "^3.17.0"
   },
@@ -36,6 +37,7 @@
     "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
     "createMigration": "yarn run typeorm migration:create ./src/database/migrations/CreateTableUser",
     "migration:run": "typeorm-ts-node-commonjs -d ./src/database/data-source.ts migration:run",
+    "migration:run:sqlite": "typeorm-ts-node-commonjs -d ./src/database/data-source-sqlite.ts migration:run",
     "build": "tsc",
     "docker:build": "docker build -t manager-pacs-api ."
   },

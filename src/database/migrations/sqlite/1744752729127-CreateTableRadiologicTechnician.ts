@@ -1,4 +1,3 @@
-import { create } from "domain";
 import { MigrationInterface, QueryRunner, Table } from "typeorm";
 
 export class CreateTableRadiologicTechnician1744752729127 implements MigrationInterface {
@@ -10,7 +9,7 @@ export class CreateTableRadiologicTechnician1744752729127 implements MigrationIn
                 columns: [
                     {
                         name: "id",
-                        type: "int",
+                        type: "INTEGER",
                         isPrimary: true,
                         isGenerated: true,
                         generationStrategy: "increment",
@@ -38,12 +37,12 @@ export class CreateTableRadiologicTechnician1744752729127 implements MigrationIn
                     {
                         name: "created_at",
                         type: "timestamp",
-                        default: "now()",
+                        default: "CURRENT_TIMESTAMP",
                     },
                     {
                         name: "updated_at",
                         type: "timestamp",
-                        default: "now()",
+                        default: "CURRENT_TIMESTAMP",
                     },
                 ],
             })
