@@ -36,7 +36,8 @@
     "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
     "createMigration": "yarn run typeorm migration:create ./src/database/migrations/CreateTableUser",
     "migration:run": "typeorm-ts-node-commonjs -d ./src/database/data-source.ts migration:run",
-    "build": "tsc"
+    "build": "tsc",
+    "docker:build": "docker build -t manager-pacs-api ."
   },
   "engines": {
     "node": "20.x"
