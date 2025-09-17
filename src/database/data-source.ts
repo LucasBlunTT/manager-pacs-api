@@ -1,42 +1,36 @@
+import fs from 'fs';
 import 'reflect-metadata';
 import { DataSource } from 'typeorm';
 import path from 'path';
 import { readDataSourceConfig } from '../util/readXML';
+import { inferOrmTypeFromJdbc, parseJdbc } from '../util/jdbc';
 
-enum DatabaseType {
-  POSTGRES = 'postgres',
-  ORACLE = 'oracle',
-  MSSQL = 'mssql',
-}
+// Pega o caminho do XML
+const otodataDir = path.join(__dirname, './otodata');
 
-function getDatabaseType(driverClass: string | undefined): DatabaseType {
-  if (!driverClass) {
-    throw new Error('Driver class não definido');
-  }
+const xmlFile = fs.readdirSync(otodataDir).find((f: string) => f.endsWith('.xml'));
+if (!xmlFile) throw new Error('Nenhum arquivo .xml foi encontrado na pasta otodata');
 
-  if (driverClass.includes('postgresql')) {
-    return DatabaseType.POSTGRES;
-  } else if (driverClass.includes('oracle')) {
-    return DatabaseType.ORACLE;
-  } else {
-    return DatabaseType.MSSQL;
-  }
-}
+const otodataPath = path.join(otodataDir, xmlFile);
 
-const dataSourceConfig = readDataSourceConfig(path.join(__dirname, '../config/otodata-ds.xml'));
+// Agora espera que readDataSourceConfig também retorne driverClass (se possível)
+const dataSourceConfig = readDataSourceConfig(otodataPath);
 
-if (!dataSourceConfig) {
+if (!dataSourceConfig?.connectionUrl) {
   throw new Error('Não foi possível carregar a configuração do datasource');
 }
 
-const typeDbc = getDatabaseType(dataSourceConfig.driverClass);
-const [host, port] = dataSourceConfig.connectionUrl.split('/')[2].split(':');
-const database = dataSourceConfig.connectionUrl.split('/')[3];
+const ormType = inferOrmTypeFromJdbc(
+  dataSourceConfig.connectionUrl,
+  dataSourceConfig.driverClass
+);
+
+const { host, port, database } = parseJdbc(dataSourceConfig.connectionUrl);
 
 export const AppDataSource = new DataSource({
-  type: typeDbc,
+  type: ormType,                  
   host,
-  port: parseInt(port, 10),
+  port,
   username: dataSourceConfig.userName,
   password: dataSourceConfig.password,
   database,
@@ -45,4 +39,3 @@ export const AppDataSource = new DataSource({
   entities: [path.join(__dirname, '../entities/*.{ts,js}')],
   migrations: [path.join(__dirname, './migrations/*.{ts,js}')],
 });
-

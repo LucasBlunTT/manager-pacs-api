@@ -88,19 +88,19 @@ class QueryController {
     }
   }
 
-  async getStationsNames(req: Request, res: Response): Promise<void> {
-    try {
-      const stations = await QueryService.getStationsNames();
-      res.status(200).json(stations);
+  async getMonitoramentoWorklist(req: Request, res: Response): Promise<void> {
+    try {    
+      const resultWorklistIntegration = await QueryService.getMonitoramentoWorklist();
+      res.status(200).json(resultWorklistIntegration);  
     } catch (error: any) {
-      console.error('Erro ao buscar nomes de estações:', error);
+      console.error('Erro ao buscar monitoramento worklist:', error);
+      
       res.status(500).json({
-        message: 'Erro ao buscar nomes de estações',
+        message: 'Erro ao buscar monitoramento worklist',
         error: error.message,
       });
     }
   }
-
 }
 
 export default QueryController;

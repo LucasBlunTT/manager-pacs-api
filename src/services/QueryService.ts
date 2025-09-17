@@ -78,19 +78,28 @@ class QueryService {
     return { drives, rawResult: result, space };
   }
 
-  async getStationsNames(): Promise<string[]> {
-    const stationsQuery = `
-      SELECT DISTINCT(stationnam)
-      FROM dicomstudies
-      ORDER BY stationnam;
+  async getMonitoramentoWorklist(): Promise<any[]> {
+    const query = `
+      SELECT
+      wi.na_accessionnumber,
+      wi.co_patientid,
+      wi.na_patientname,
+      wi.na_description,
+      w.no_modalityris,
+      wi.na_datetimeintegrated,
+      wi.na_studydate,
+      w.FL_STUDYRECEIVED
+      FROM worklistintegration wi
+      INNER JOIN worklist w
+      ON w.no_accessionnumber = wi.na_accessionnumber
+      ORDER BY wi.co_worklistintegration DESC
+      LIMIT 100;
     `;
-  
-    const result = await AppDataSource.query(stationsQuery);
-  
-    const stationNames = result.map((station: { stationnam: string }) => station.stationnam);
-  
-    return stationNames;
+
+    const resultWorklistIntegration: any[] = await AppDataSource.query(query);
+    console.log(resultWorklistIntegration);
+    return resultWorklistIntegration;
   }
-  }
+}
 
 export default new QueryService();
