@@ -100,6 +100,17 @@ class QueryService {
     console.log(resultWorklistIntegration);
     return resultWorklistIntegration;
   }
+
+  
+  async getEquipamentos(): Promise<any[]> {
+    const query = `
+      SELECT DISTINCT(stationnam) AS "Station Name"
+      FROM dicomstudies;
+    `;
+    const equipamentos: any[] = await AppDataSource.query(query);
+    console.log(equipamentos);
+    return equipamentos;
+  }
 }
 
 export default new QueryService();

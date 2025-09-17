@@ -101,6 +101,15 @@ class QueryController {
       });
     }
   }
+
+  async getEquipamentos(req: Request, res: Response): Promise<void> {
+    try {    
+      const resultEquipamentos = await QueryService.getEquipamentos();
+      res.status(200).json(resultEquipamentos);  
+    } catch (error: any) {
+      console.error('Erro ao buscar relatorio de produtividade dos equipamentos:', error);
+    }
+  }
 }
 
 export default QueryController;
